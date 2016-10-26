@@ -12,6 +12,17 @@
 
 #include "main.h"
 
+
+Encoder enc_liftLeft, enc_liftRight;
+
+void SetLift(const int power){
+motorSet(1, power);
+motorSet(2, power);
+motorSet(3, power + (sign(abs(encoderGet(enc_liftLeft)) - abs(encoderGet(enc_liftRight))) * power * 0.1));
+motorSet(4, power + (sign(abs(encoderGet(enc_liftLeft)) - abs(encoderGet(enc_liftRight))) * power * 0.1));
+}
+
+
 /*
  * Runs the user operator control code. This function will be started in its own task with the
  * default priority and stack size whenever the robot is enabled via the Field Management System
@@ -30,7 +41,22 @@
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 void operatorControl() {
-	while (1) {
+int leftEnc, rightEnc;
+	while (true) {
+leftEnc = encoderGet(enc_liftLeft);
+rightEnc = encoderGet(enc_liftRight);
+SetLift(127);
+
+motorSet(4, joystickGetAnalog(1, 3));
+motorSet(4, joystickGetAnalog(1, 3));
+motorSet(4, joystickGetAnalog(1, 3));
+motorSet(4, joystickGetAnalog(1, 3));
+
+if (joystickGetDigital(1, 5, JOY_DOWN) && !joystickGetDigital(1, 5, JOY_UP)){
+	// Go down
+}
+
+
 		delay(20);
 	}
 }

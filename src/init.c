@@ -11,6 +11,7 @@
  */
 
 #include "main.h"
+Encoder enc_liftLeft, enc_liftRight;
 
 /*
  * Runs pre-initialization code. This function will be started in kernel mode one time while the
@@ -21,6 +22,7 @@
  * configure a UART port (usartOpen()) but cannot set up an LCD (lcdInit()).
  */
 void initializeIO() {
+
 }
 
 /*
@@ -37,4 +39,6 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
+  enc_liftLeft = encoderInit(LEFT_ENCODER_1, LEFT_ENCODER_2, false);
+  enc_liftLeft = encoderInit(RIGHT_ENCODER_1, RIGHT_ENCODER_2, false);
 }
