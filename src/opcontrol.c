@@ -15,11 +15,14 @@
 
 Encoder enc_liftLeft, enc_liftRight;
 
-void SetLift(const int power){
-motorSet(1, power);
-motorSet(2, power);
-motorSet(3, power + (sign(abs(encoderGet(enc_liftLeft)) - abs(encoderGet(enc_liftRight))) * power * 0.1));
-motorSet(4, power + (sign(abs(encoderGet(enc_liftLeft)) - abs(encoderGet(enc_liftRight))) * power * 0.1));
+#define LIFT_UPPER_LIMIT 1234
+#define LIFT_LOWER_LIMIT 1234
+
+void setLift(const int power) {
+    motorSet(1, power);
+    motorSet(2, power);
+    motorSet(3, power + (sign(abs(encoderGet(enc_liftLeft)) - abs(encoderGet(enc_liftRight))) * power * 0.1));
+    motorSet(4, power + (sign(abs(encoderGet(enc_liftLeft)) - abs(encoderGet(enc_liftRight))) * power * 0.1));
 }
 
 
@@ -41,22 +44,31 @@ motorSet(4, power + (sign(abs(encoderGet(enc_liftLeft)) - abs(encoderGet(enc_lif
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 void operatorControl() {
-int leftEnc, rightEnc;
-	while (true) {
-leftEnc = encoderGet(enc_liftLeft);
-rightEnc = encoderGet(enc_liftRight);
-SetLift(127);
 
-motorSet(4, joystickGetAnalog(1, 3));
-motorSet(4, joystickGetAnalog(1, 3));
-motorSet(4, joystickGetAnalog(1, 3));
-motorSet(4, joystickGetAnalog(1, 3));
+	encoderReset(enc_liftLeft);
+	encoderReset(enc_liftRight);
+    while (true) {
+        motorSet(4, joystickGetAnalog(1, 3));
+        motorSet(4, joystickGetAnalog(1, 3));
+        motorSet(4, joystickGetAnalog(1, 3));
+        motorSet(4, joystickGetAnalog(1, 3));
 
-if (joystickGetDigital(1, 5, JOY_DOWN) && !joystickGetDigital(1, 5, JOY_UP)){
-	// Go down
-}
+        if (!joystickGetDigital(1, 5, JOY_DOWN) && joystickGetDigital(1, 5, JOY_UP)) {
+            if (encoderGet(enc_liftLeft) < LIFT_UPPER_LIMIT){
+		setLift(127);    
+	    } else {
+		setLift(0);    
+	    }
+        }
+        if (joystickGetDigital(1, 5, JOY_DOWN) && !joystickGetDigital(1, 5, JOY_UP)) {
+            // Go down
+        }
+
+        if (!joystickGetDigital(1, 5, JOY_DOWN) && !joystickGetDigital(1, 5, JOY_UP)) {
+            // Go nowhere
+        }
 
 
-		delay(20);
-	}
+        delay(20);
+    }
 }
